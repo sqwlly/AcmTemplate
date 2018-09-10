@@ -49,7 +49,7 @@ void Insert(node *root,int i,int v)
 
 void add(node *root,int a,int b,LL c)
 {
-	if(root->L == a&& root->R == b){
+	if(root->L == a && root->R == b){
 		root->Inc += c;
 		return;
 	}
