@@ -1,11 +1,11 @@
 # include<cstdio>
 # include<cstring>
 using namespace std;
-#define NUM 50
-int MAXN,n,mod;
+const int MAXN = 105, mod = 1e9+7;
+typedef long long LL;
 struct Matrix//矩阵的类
 {
-    int a[NUM][NUM];
+    LL a[MAXN][MAXN];
 
     void init()           //将其初始化为单位矩阵
     {
@@ -13,43 +13,44 @@ struct Matrix//矩阵的类
         for (int i = 0; i < MAXN; i++)
             a[i][i] = 1;
     }
-} A;
+};
 
-Matrix mul(Matrix a,Matrix b)  //(a*b)%mod  矩阵乘法
+Matrix mul(Matrix x, Matrix y) {
+    Matrix ret;
+    for (int i = 0; i < MAXN; i++) {
+        for (int j = 0; j < MAXN; j++) {
+            ret.a[i][j] = 0;
+            for (int k = 0; k < MAXN; k++) {
+                ret.a[i][j] += x.a[i][k] * y.a[k][j] % mod;
+                ret.a[i][j] %= mod;
+            }
+        }
+    }
+    return ret;
+}
+
+Matrix pow(Matrix a,LL n)    //(a^n)%mod  //矩阵快速幂
 {
     Matrix ans;
-    for (int i = 0; i < MAXN; i++)
-        for (int j = 0; j < MAXN; j++) {
-            ans.a[i][j] = 0;
-            for (int k = 0; k < MAXN; k++)
-                ans.a[i][j] += a.a[i][k] * b.a[k][j];
-            ans.a[i][j] %= mod;
-        }
+    ans.init();
+    while (n > 0) {
+        if (n & 1)//n&1
+            ans = mul(ans, a);
+        n >>= 1;
+        a = mul(a, a);
+    }
     return ans;
 }
 
-Matrix add(Matrix a,Matrix b)  //(a+b)%mod  //矩阵加法
+Matrix add(Matrix x,Matrix y)  //(a+b)%mod  //矩阵加法
 {
     int i, j, k;
     Matrix ans;
     for (i = 0; i < MAXN; i++)
         for (j = 0; j < MAXN; j++) {
-            ans.a[i][j] = a.a[i][j] + b.a[i][j];
+            ans.a[i][j] = x.a[i][j] + y.a[i][j];
             ans.a[i][j] %= mod;
         }
-    return ans;
-}
-
-Matrix pow(Matrix a,int n)    //(a^n)%mod  //矩阵快速幂
-{
-    Matrix ans;
-    ans.init();
-    while (n) {
-        if (n % 2)//n&1
-            ans = mul(ans, a);
-        n /= 2;
-        a = mul(a, a);
-    }
     return ans;
 }
 
@@ -67,24 +68,9 @@ Matrix sum(Matrix a,int n)  //(a+a^2+a^3....+a^n)%mod// 矩阵的幂和
     return ans;
 }
 
-void output(Matrix a)//输出矩阵
-{
-    for (int i = 0; i < MAXN; i++)
-        for (int j = 0; j < MAXN; j++)
-            printf("%d%c", a.a[i][j], j == MAXN - 1 ? '\n' : ' ');
-}
-
 int main() {
     freopen("in.txt", "r", stdin);
-    Matrix ans;
-    scanf("%d%d%d", &MAXN, &n, &mod);
-    for (int i = 0; i < MAXN; i++)
-        for (int j = 0; j < MAXN; j++) {
-            scanf("%d", &A.a[i][j]);
-            A.a[i][j] %= mod;
-        }
-    ans = sum(A, n);
-    output(ans);
+    Matrix ans,A;
     return 0;
 }
 
